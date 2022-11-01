@@ -34,7 +34,7 @@ services:
     entrypoint: wait-for app:3000 -t 20 -- nginx -g "daemon off;"
     tty: true
     ports:
-      - '8080:8080'
+      - '8080:80'
     networks:
       - reversonet
     depends_on:
