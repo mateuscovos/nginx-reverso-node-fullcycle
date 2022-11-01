@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  
+  db:
+    image: mysql:5.7
+    command: --innodb-use-native-aio=0
+    container_name: db
+    restart: always
+    tty: true
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=reversodb
+      - MYSQL_ROOT_PASSWORD=root  
+    networks:
+      - reversonet
+
+  app:
+    build: .
+    container_name: 'app'
+    tty: true
+    entrypoint: wait-for db:3306 -t 40 -- npm run start
+    volumes:
+      - ./:/usr/src/app  
+    networks:
+      - reversonet
+    depends_on:
+      - db 
+
+  nginx:
+    build: ./nginx
+    container_name: 'nginx'
+    entrypoint: wait-for app:3000 -t 20 -- nginx -g "daemon off;"
+    tty: true
+    ports:
+      - '8080:8080'
+    networks:
+      - reversonet
+    depends_on:
+      - app
+
+networks:
+  reversonet:
+    driver: bridge
