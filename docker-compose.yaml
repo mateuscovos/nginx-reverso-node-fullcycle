@@ -20,7 +20,7 @@ services:
     build: .
     container_name: 'app'
     tty: true
-    entrypoint: wait-for db:3306 -t 40 -- npm run start
+    entrypoint: wait-for db:3306 -t 40 -- ./start.sh
     volumes:
       - ./:/usr/src/app  
     networks:
